@@ -3,16 +3,25 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: gmorais- <gmorais-@student.42lisboa.com    +#+  +:+       +#+         #
+#    By: gmorais- <gmorais-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/17 13:57:31 by gmorais-          #+#    #+#              #
-#    Updated: 2023/05/17 14:13:10 by gmorais-         ###   ########.fr        #
+#    Updated: 2023/06/02 14:04:00 by gmorais-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = so_long
 
-SRCS_NAME =	main.c 
+SRCS_NAME =	main.c \
+			check_map.c \
+			check_path.c \
+			close_game.c \
+			map.c \
+			moves.c \
+			get_next_line_utils.c \
+			get_next_line.c \
+			put_img.c \
+			keys.c
 
 CC = gcc
 CFLAGS = -Wall -Werror -Wextra -Imlx -g -fsanitize=address
@@ -26,14 +35,14 @@ RM = rm -rf
 
 HEADER = so_long.h
 
-#LIBFT = ./libft/libft.a
-#LIBFT_PATH = ./libft
+LIBFT = ./libft/libft.a
+LIBFT_PATH = ./libft
 
 INC = -Iincludes -I/usr/include -Imlx_linux
 
 SRC_PATH = ./src
 
-OBJ_PATH = ./obj
+OBJ_PATH = ./objects
 
 OBJS = $(addprefix $(OBJ_PATH)/, $(SRCS_NAME:.c=.o))
 
@@ -41,9 +50,12 @@ SRC = $(addprefix $(SRC_PATH)/, $(SRCS_NAME))
 
 all: $(NAME)
 
-$(NAME) : $(OBJS)
+$(NAME) : $(libft) $(OBJS)
 		make -s -C mlx_linux/
-		$(CC) $(CFLAGS) $(OBJS) $(INC) $(LMLX_FLAGS) $(MLX_INCLUDE) -o $(NAME)
+		$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(INC) $(LMLX_FLAGS) $(MLX_INCLUDE) -o $(NAME)
+
+$(LIBFT):  $(shell make -C $(LIBFT_PATH) -q)
+	make -C$(LIBFT_PATH)
 
 $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c $(MLX_LIB)
 	mkdir -p objects

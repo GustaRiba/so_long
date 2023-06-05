@@ -3,43 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gmorais- <gmorais-@student.42lisboa.com    +#+  +:+       +#+        */
+/*   By: gmorais- <gmorais-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/16 11:11:27 by gmorais-          #+#    #+#             */
-/*   Updated: 2023/05/18 11:58:31 by gmorais-         ###   ########.fr       */
+/*   Updated: 2023/06/05 11:50:56 by gmorais-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../mlx_linux/mlx.h"
+#include "../so_long.h"
 
-#include <stdlib.h>
-
-# define WINDOW_WIDTH 1920
-# define WINDOW_HEIGHT 1080
-
-typedef struct	s_data {
-	void	*img;
-	char	*addr;
-	int		bits_per_pixel;
-	int		line_length;
-	int		endian;
-}				t_data;
-
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
+t_all	*all(void)
 {
-	char	*dst;
+	static t_all	all;
 
-	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-	*(unsigned int *)dst = color;
+	return (&all);
 }
 
-int	main(void)
+void init_img(t_all *img)
 {
-	void	*mlx;
-	void	*mlx_win;
+	int	i;
+	
+	img->wall = mlx_xpm_file_to_image(img->mlx, "img/wall.xpm", &i, &i);
+	img->floor = mlx_xpm_file_to_image(img->mlx, "img/floor.xpm", &i, &i);
+	img->cl = mlx_xpm_file_to_image(img->mlx, "img/coin.xpm", &i, &i);
+	img->exit_f = mlx_xpm_file_to_image(img->mlx, "img/exit.xpm", &i, &i);
+	img->player = mlx_xpm_file_to_image(img->mlx, "img/player.xpm", &i, &i);
+	img->nbr_cl = check_elements(img->map, 'C');
+	img->nbr_en = check_elements(img->map, 'X');
+}
 
-	mlx = mlx_init();
-	mlx_win = mlx_new_window(mlx, 1920, 1080, "MEU PAU");
-	mlx_pixel_put(mlx, mlx_win, 800, 500, 0x0000FF00);
-	mlx_loop(mlx);
+int	main(int ac, char **av)
+{
+	if (ac != 2)
+		exit(write(2, "Error\n", 6));
+	(*all()).map = create_map(av[1]);
+	(*all()).mlx = mlx_init();
+	if (!fill_flood())
+		return (0);
+	init_img(all());
+	(*all()).win = mlx_new_window((*all()).mlx, (*all()).map.map_w * 64,
+			(*all()).map.map_h * 64, "so_long");
+	mlx_hook((*all()).win, 17, 1, ft_close, NULL);
+	mlx_hook((*all()).win, 2, 1L << 0, handle_keys, NULL);
+	put_img((*all()).map.mat, (*all()));
+	mlx_loop((*all()).mlx);
+	return (0);
 }
