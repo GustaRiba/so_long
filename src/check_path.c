@@ -3,63 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   check_path.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gmorais- <gmorais-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmorais- <gmorais-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 10:19:21 by gmorais-          #+#    #+#             */
-/*   Updated: 2023/06/05 13:54:51 by gmorais-         ###   ########.fr       */
+/*   Updated: 2023/07/19 14:43:03 by gmorais-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../so_long.h"
-
-static void	flood_fill(int x, int y, int *flag, char **tmp)
-{
-	if (tmp[y][x] == '1' || tmp[y][x] == 'P' || tmp[y][x] == 'D')
-		return ;
-	else if (tmp[y][x] == '0')
-		tmp[y][x] = 'P';
-	else if (tmp [y][x] == 'C' || tmp[y][x] == 'X')
-		tmp[y][x] = 'D';
-	else if (tmp[y][x] == 'E')
-	{
-		(*flag)++;
-		tmp[y][x] = 'E';
-	}
-	flood_fill(x + 1, y, flag, tmp);
-	flood_fill(x - 1, y, flag, tmp);
-	flood_fill(x, y + 1, flag, tmp);
-	flood_fill(x, y - 1, flag, tmp);
-}
-
-static int	check_collec(char **map)
-{
-	int	x;
-	int	y;
-
-	y = 0;
-	while (map[y])
-	{
-		x = 0;
-		while (map[y][x])
-		{
-			if (map[y][x] == 'C')
-				return (0);
-			x++;
-		}
-		y++;
-	}
-	return (1);
-}
-
-void	free_matrix(char **matrix)
-{
-	int	i;
-
-	i = 0;
-	while (matrix[i])
-		free(matrix[i++]);
-	free(matrix);
-}
 
 char	**map_copy(void)
 {
@@ -90,25 +41,77 @@ char	**map_copy(void)
 	return (copy);
 }
 
-int	fill_flood(void)
+static int	count_collet(char **map)
 {
-	t_player	p;
-	int			flag;
-	char		**map;
+	int	x;
+	int	y;
+	int	count;
 
-	flag = 0;
-	map = map_copy();
-	p = find_player(map);
-	flood_fill(p.x + 1, p.y, &flag, map);
-	flood_fill(p.x - 1, p.y, &flag, map);
-	flood_fill(p.x, p.y + 1, &flag, map);
-	flood_fill(p.x, p.y - 1, &flag, map);
-	if (flag == 0 || !check_collec(map))
+	y = 0;
+	count = 0;
+	while (map[y])
 	{
-		 ft_putstr_fd("Invalid path\n", 2);
-		 free_matrix(map);
-		 return (0);
+		x = 0;
+		while (map[y][x])
+			if (map[y][x++] == 'C')
+				count++;
+		y++;
 	}
-	free_matrix(map);
+	return (count);
+}
+
+static void	find_path_collet(char **tmp, int x, int y)
+{
+	tmp[y][x] = 'V';
+	if (tmp[y][x + 1] != '1' && tmp[y][x + 1] != 'V' && tmp[y][x + 1] != 'E')
+		find_path_collet(tmp, x + 1, y);
+	if (tmp[y][x - 1] != '1' && tmp[y][x - 1] != 'V' && tmp[y][x - 1] != 'E')
+		find_path_collet(tmp, x - 1, y);
+	if (tmp[y + 1][x] != '1' && tmp[y + 1][x] != 'V' && tmp[y + 1][x] != 'E')
+		find_path_collet(tmp, x, y + 1);
+	if (tmp[y - 1][x] != '1' && tmp[y - 1][x] != 'V' && tmp[y - 1][x] != 'E')
+		find_path_collet(tmp, x, y - 1);
+}
+
+static int	find_path_exit(char **tmp, int x, int y)
+{
+	static int	exit;
+
+	if (tmp[y][x] == 'E')
+		exit++;
+	tmp[y][x] = 'V';
+	if (tmp[y][x + 1] != '1' && tmp[y][x + 1] != 'V')
+		find_path_exit(tmp, x + 1, y);
+	if (tmp[y][x - 1] != '1' && tmp[y][x - 1] != 'V')
+		find_path_exit(tmp, x - 1, y);
+	if (tmp[y + 1][x] != '1' && tmp[y + 1][x] != 'V')
+		find_path_exit(tmp, x, y + 1);
+	if (tmp[y - 1][x] != '1' && tmp[y - 1][x] != 'V')
+		find_path_exit(tmp, x, y - 1);
+	return (exit);
+}
+
+int	check_path(void)
+{
+	char		**tmp;
+	int			collet;
+	int			valid;
+	t_player	p;
+
+	tmp = map_copy();
+	if (!tmp)
+		return (0);
+	p = find_player(tmp);
+	find_path_collet(tmp, p.x, p.y);
+	collet = count_collet(tmp);
+	free_matrix(tmp);
+	tmp = map_copy();
+	valid = (find_path_exit(tmp, p.x, p.y) && !collet);
+	free_matrix(tmp);
+	if (!valid)
+	{
+		ft_putstr_fd("provided map does not contain a valid path.", 2);
+		return (0);
+	}
 	return (1);
 }

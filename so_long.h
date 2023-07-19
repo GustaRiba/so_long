@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   so_long.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gmorais- <gmorais-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmorais- <gmorais-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 12:11:28 by gmorais-          #+#    #+#             */
-/*   Updated: 2023/06/05 13:58:50 by gmorais-         ###   ########.fr       */
+/*   Updated: 2023/07/19 14:37:39 by gmorais-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef struct s_player
 {
 	int	x;
 	int	y;
+	int error;
 }		t_player;
 
 //mapa merdas
@@ -67,7 +68,6 @@ typedef struct s_all
 	void		*cl;
 	void		*en;
 	void		*exit_f;
-	int			nbr_en;
 	int			nbr_cl;
 	int			steps;
 
@@ -81,6 +81,7 @@ int			check_geral(t_map map);
 t_map		create_map(char *path);
 int			check_elements(t_map map, char c);
 void		free_map(t_map *map);
+int			check_quanti(int player, int exit, int collet);
 
 //keys
 int			handle_keys(int o);
@@ -88,9 +89,12 @@ int			handle_keys(int o);
 //close_game
 int			ft_close(void);
 void		exit_game(char *str);
+void		close_path(void);
 
 //path
-int			fill_flood(void);
+//int			fill_flood(void);
+int			check_path(void);
+void		free_matrix(char **matrix);
 
 //img
 void		put_img(char **map, t_all img);
@@ -100,8 +104,8 @@ t_player	find_player(char **map);
 void		move_player(char **map, int x, int y);
 
 //get_next_line
-char	*get_next_line(int fd);
-char	*ft_strjoin_sec(char *str1, char *str2);
-int		stashfree(char *buff);
+char		*get_next_line(int fd);
+char		*ft_strjoin_sec(char *str1, char *str2);
+int			stashfree(char *buff);
 
 #endif

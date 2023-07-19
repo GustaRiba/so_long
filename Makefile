@@ -6,7 +6,7 @@
 #    By: gmorais- <gmorais-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/17 13:57:31 by gmorais-          #+#    #+#              #
-#    Updated: 2023/06/02 14:04:00 by gmorais-         ###   ########.fr        #
+#    Updated: 2023/06/12 11:28:08 by gmorais-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,10 +21,11 @@ SRCS_NAME =	main.c \
 			get_next_line_utils.c \
 			get_next_line.c \
 			put_img.c \
-			keys.c
+			keys.c\
+			check_map_2.c
 
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -Imlx -g -fsanitize=address
+CFLAGS = -Wall -Werror -Wextra -Imlx -g #-fsanitize=address
 MILIB = -I /usr/X11/include -g -L /usr/X11/lib -l minilibx -framework OpenGL -framework AppKit
 
 MLX_LIB_DIR = mlx_linux/

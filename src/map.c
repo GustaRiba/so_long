@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gmorais- <gmorais-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmorais- <gmorais-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 12:15:22 by gmorais-          #+#    #+#             */
-/*   Updated: 2023/06/05 12:04:50 by gmorais-         ###   ########.fr       */
+/*   Updated: 2023/06/14 14:15:51 by gmorais-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,8 @@ t_map	get_map(char *path)
 	fd = open(path, O_RDONLY);
 	if (!map.mat || fd < 0 || map.map_h < 2)
 	{
+		free_matrix(map.mat);
 		ft_putstr_fd("Error ao criar mapa!\n", 1);
-		free_map(&map);
 		if (fd != -1)
 			close(fd);
 		exit(EXIT_FAILURE);
@@ -78,13 +78,11 @@ t_map	create_map(char *path)
 		exit(EXIT_FAILURE);
 	}
 	map = get_map(path);
-	if (!check_geral(map))
+	if (check_geral(map) == 1)
 	{
 		ft_putstr_fd("INVALID MAP! RESOLVE!\n", 2);
 		free_map(&map);
 		exit(EXIT_FAILURE);
 	}
-	else
-		ft_putstr_fd("VALID MAP\n", 1);
 	return (map);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   put_img.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gmorais- <gmorais-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gmorais- <gmorais-@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/01 16:58:33 by gmorais-          #+#    #+#             */
-/*   Updated: 2023/06/05 14:06:10 by gmorais-         ###   ########.fr       */
+/*   Updated: 2023/06/14 14:10:55 by gmorais-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,12 @@ void	choose_img(char c, int x, int y, t_all img)
 
 void	print_step(void)
 {
-	char *steps;
-	char *str;
+	char	*steps;
+	char	*str;
 
 	steps = ft_itoa((*all()).steps);
 	str = ft_strjoin("steps = ", steps);
-	mlx_string_put((*all()).mlx, (*all()).win, 50, 50, 0xFFFFFFFF, str);
+	mlx_string_put((*all()).mlx, (*all()).win, 50, 50, 0xFF0000, str);
 	free(str);
 	free(steps);
 }
@@ -42,12 +42,12 @@ void	put_img(char **map, t_all img)
 {
 	int	i;
 	int	j;
-	
+
 	i = 0;
-	while(map[i])
+	while (map[i])
 	{
 		j = 0;
-		while(map[i][j] != '\n')
+		while (map[i][j] != '\n')
 		{
 			choose_img(map[i][j], j, i, img);
 			j++;
